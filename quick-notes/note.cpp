@@ -39,7 +39,7 @@ void Note::setBody(std::string body)
 }
 
 bool Note::validateTitle(std::string title) {
-    if (title.size() > 64)
+    if (title.size() > Note::MAX_TITLE_SIZE)
         return false;
 
     for (char i : title)
@@ -53,7 +53,7 @@ bool Note::validateTitle(std::string title) {
 
 bool Note::validateBody(std::string body)
 {
-    if (body.size() > 1024 || body.size() == 0)
+    if (body.size() > Note::MAX_BODY_SIZE || body.size() == 0)
         return false;
 
     for (char i : body)

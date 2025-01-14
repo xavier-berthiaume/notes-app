@@ -28,6 +28,10 @@ private slots:
 
     void on_editButton_clicked();
 
+    void on_data_modified(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles);
+
+    void on_deleteButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 

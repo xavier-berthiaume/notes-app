@@ -12,7 +12,8 @@ class CreateNoteDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit CreateNoteDialog(QWidget *parent = nullptr);
+    // explicit CreateNoteDialog(QWidget *parent = nullptr);
+    CreateNoteDialog(QWidget *parent = nullptr, QString title = "", QString body = "");
     ~CreateNoteDialog();
 
     QString getTitle() const;

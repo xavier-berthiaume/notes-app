@@ -7,7 +7,16 @@
 
 #include "note.h"
 
+/*
 CreateNoteDialog::CreateNoteDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::CreateNoteDialog)
+{
+    CreateNoteDialog(parent, "", "");
+}
+*/
+
+CreateNoteDialog::CreateNoteDialog(QWidget *parent, QString title, QString body) :
     QDialog(parent),
     ui(new Ui::CreateNoteDialog)
 {
@@ -18,6 +27,9 @@ CreateNoteDialog::CreateNoteDialog(QWidget *parent) :
 
     QLineEdit *titleEdit = findChild<QLineEdit *>("titleEdit");
     QPlainTextEdit *textEdit = findChild<QPlainTextEdit *>("textEdit");
+
+    titleEdit->setText(title);
+    textEdit->insertPlainText(body);
 
     connect(titleEdit, &QLineEdit::textChanged, this, &CreateNoteDialog::validateInput);
     connect(textEdit, &QPlainTextEdit::textChanged, this, &CreateNoteDialog::validateInput);

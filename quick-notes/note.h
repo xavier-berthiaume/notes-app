@@ -7,6 +7,9 @@
 
 class Note
 {
+    static const int MAX_TITLE_SIZE = 64;
+    static const int MAX_BODY_SIZE = 1024;
+
     uint32_t id;
     std::string title;
     std::string body;

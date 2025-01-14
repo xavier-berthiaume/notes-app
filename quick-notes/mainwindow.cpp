@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
     QListView *listview = this->findChild<QListView *>("listView");
     listview->setModel(notes);
 
+
+    connect(notes, &NoteModel::dataChanged, this, &MainWindow::on_data_modified);
     connect(listview->selectionModel(), &QItemSelectionModel::currentChanged,
             this, &MainWindow::on_note_selected);
 }
@@ -56,7 +58,7 @@ void MainWindow::on_editButton_clicked()
         return;
     }
 
-    CreateNoteDialog createDialog(this);
+    CreateNoteDialog createDialog(this, selectedIndex.data(NoteModel::TitleRole).toString(), selectedIndex.data(NoteModel::BodyRole).toString());
 
     if (createDialog.exec() == QDialog::Accepted)
     {
@@ -91,5 +93,46 @@ void MainWindow::on_note_selected(const QModelIndex& index)
     bodyArea->setText(body);
     editButton->setEnabled(true);
     deleteButton->setEnabled(true);
+}
+
+void MainWindow::on_data_modified(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    QListView *noteListView = findChild<QListView *>("listView");
+    QModelIndex currentIndex = noteListView->currentIndex();
+
+    QLabel *titleLabel = findChild<QLabel *>("titleLabel");
+    QTextBrowser *body = findChild<QTextBrowser *>("body");
+
+    if (currentIndex.row() >= topLeft.row() && currentIndex.row() <= bottomRight.row()) {
+        QString updatedTitle = currentIndex.data(NoteModel::TitleRole).toString();
+        QString updatedBody = currentIndex.data(NoteModel::BodyRole).toString();
+
+        titleLabel->setText(updatedTitle);
+        body->setText(updatedBody);
+    }
+}
+
+void MainWindow::on_deleteButton_clicked()
+{
+    QListView *noteListView = findChild<QListView *>("listView");
+    QModelIndex currentIndex = noteListView->currentIndex();
+
+    QLabel *titleLabel = findChild<QLabel *>("titleLabel");
+    QTextBrowser *body = findChild<QTextBrowser *>("body");
+
+    QPushButton *editButton = findChild<QPushButton *>("editButton");
+    QPushButton *deleteButton = findChild<QPushButton *>("deleteButton");
+
+    if (!currentIndex.isValid()) {
+        return;
+    }
+
+    notes->removeNote(currentIndex.row());
+
+    titleLabel->setText("No note selected.");
+    body->setText("");
+
+    editButton->setEnabled(false);
+    deleteButton->setEnabled(false);
 }
 
