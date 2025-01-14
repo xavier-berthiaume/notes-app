@@ -4,6 +4,7 @@
 #include <QAbstractListModel>
 #include <QString>
 #include <QVector>
+#include <cctype>
 
 #include "note.h"
 

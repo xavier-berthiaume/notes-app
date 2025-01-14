@@ -3,6 +3,7 @@
 
 #include <QPalette>
 #include <QPlainTextEdit>
+#include <QPushButton>
 
 #include "note.h"
 
@@ -12,8 +13,14 @@ CreateNoteDialog::CreateNoteDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    validTitle = false;
-    validText = false;
+    QDialogButtonBox *buttonBox = findChild<QDialogButtonBox *>("dialogButtons");
+    buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
+
+    QLineEdit *titleEdit = findChild<QLineEdit *>("titleEdit");
+    QPlainTextEdit *textEdit = findChild<QPlainTextEdit *>("textEdit");
+
+    connect(titleEdit, &QLineEdit::textChanged, this, &CreateNoteDialog::validateInput);
+    connect(textEdit, &QPlainTextEdit::textChanged, this, &CreateNoteDialog::validateInput);
 }
 
 CreateNoteDialog::~CreateNoteDialog()
@@ -21,45 +28,51 @@ CreateNoteDialog::~CreateNoteDialog()
     delete ui;
 }
 
-void CreateNoteDialog::on_titleEdit_textChanged(const QString &arg1)
+QString CreateNoteDialog::getTitle() const
 {
+    QLineEdit *titleEdit = findChild<QLineEdit *>("titleEdit");
+
+    return titleEdit->text();
+}
+
+QString CreateNoteDialog::getBody() const
+{
+    QPlainTextEdit *textEdit = findChild<QPlainTextEdit *>("textEdit");
+
+    return textEdit->toPlainText();
+}
+
+void CreateNoteDialog::validateInput()
+{
+    QLineEdit *titleEdit = findChild<QLineEdit *>("titleEdit");
+    QPlainTextEdit *textEdit = findChild<QPlainTextEdit *>("textEdit");
+
+    bool titleIsValid = Note::validateTitle(titleEdit->text().toStdString());
+    bool bodyIsValid = Note::validateBody(textEdit->toPlainText().toStdString());
+
     QPalette palette;
-    QLineEdit *edit = findChild<QLineEdit *>("titleEdit");
 
-    qDebug() << "Title text: " << arg1;
-
-    if (Note::validateTitle(arg1.toStdString())) {
+    if (titleIsValid) {
         palette.setColor(QPalette::Base, Qt::green);
         palette.setColor(QPalette::Text, Qt::white);
-        validTitle = true;
     } else {
         palette.setColor(QPalette::Base, Qt::red);
         palette.setColor(QPalette::Text, Qt::black);
-        validTitle = false;
     }
 
-    edit->setPalette(palette);
-}
+    titleEdit->setPalette(palette);
 
-void CreateNoteDialog::on_textEdit_textChanged()
-{
-    QPalette palette;
-    QPlainTextEdit *edit = findChild<QPlainTextEdit *>("textEdit");
-
-    qDebug() << "Body text: " << edit->toPlainText();
-
-    if (Note::validateBody(edit->toPlainText().toStdString())) {
+    if (bodyIsValid) {
         // edit->setStyleSheet("QPlainTextEdit {background-color: green; color: white;}");
         palette.setColor(QPalette::Base, Qt::green);
         palette.setColor(QPalette::Text, Qt::white);
-        validText = true;
     } else {
-        // edit->setStyleSheet("QPlainTextEdit {background-color: red; color: black;}");
         palette.setColor(QPalette::Base, Qt::red);
         palette.setColor(QPalette::Text, Qt::black);
-        validText = false;
     }
 
-    edit->setPalette(palette);
-}
+    textEdit->setPalette(palette);
 
+    QDialogButtonBox *buttonBox = findChild<QDialogButtonBox *>("dialogButtons");
+    buttonBox->button(QDialogButtonBox::Save)->setEnabled(titleIsValid && bodyIsValid);
+}

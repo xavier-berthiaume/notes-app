@@ -44,7 +44,7 @@ bool Note::validateTitle(std::string title) {
 
     for (char i : title)
     {
-        if (!std::isalnum(i))
+        if (!std::isprint(i))
             return false;
     }
 
@@ -53,7 +53,7 @@ bool Note::validateTitle(std::string title) {
 
 bool Note::validateBody(std::string body)
 {
-    if (body.size() > 1024)
+    if (body.size() > 1024 || body.size() == 0)
         return false;
 
     for (char i : body)

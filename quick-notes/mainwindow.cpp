@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+#include <QDialogButtonBox>
+
 #include "createnotedialog.h"
 #include "creditwidget.h"
 
@@ -35,6 +37,8 @@ void MainWindow::on_createButton_clicked()
 {
     CreateNoteDialog createDialog(this);
 
-    createDialog.exec();
+    if(createDialog.exec() == QDialog::Accepted)
+    {
+        notes->addNote({static_cast<uint32_t>(notes->rowCount() + 1), createDialog.getTitle().toStdString(), createDialog.getBody().toStdString()});
+    }
 }
-

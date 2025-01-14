@@ -11,16 +11,15 @@ class CreateNoteDialog : public QDialog
 {
     Q_OBJECT
 
-    bool validTitle, validText;
-
 public:
     explicit CreateNoteDialog(QWidget *parent = nullptr);
     ~CreateNoteDialog();
 
-private slots:
-    void on_titleEdit_textChanged(const QString &arg1);
+    QString getTitle() const;
+    QString getBody() const;
 
-    void on_textEdit_textChanged();
+private slots:
+    void validateInput();
 
 private:
     Ui::CreateNoteDialog *ui;
