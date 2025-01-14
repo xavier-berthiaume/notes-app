@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "notemodel.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -14,6 +16,13 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    NoteModel *notes;
+
+private slots:
+    void on_creditsButton_clicked();
+
+    void on_createButton_clicked();
 
 private:
     Ui::MainWindow *ui;

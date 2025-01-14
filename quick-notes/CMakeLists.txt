@@ -14,9 +14,24 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
+
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+
+        creditwidget.cpp
+        creditwidget.h
+        creditwidget.ui
+
+        note.cpp
+        note.h
+
+        notemodel.cpp
+        notemodel.h
+
+        createnotedialog.cpp
+        createnotedialog.h
+        createnotedialog.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
