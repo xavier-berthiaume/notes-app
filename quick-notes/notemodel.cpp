@@ -27,6 +27,7 @@ QVariant NoteModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole: return QString::fromStdString(note.getTitle());  // Default display shows the title
 
     }
+
     return QVariant();
 }
 

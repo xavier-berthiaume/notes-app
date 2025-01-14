@@ -13,6 +13,8 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    void update_display(const QModelIndex &index);
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -24,7 +26,7 @@ private slots:
 
     void on_createButton_clicked();
 
-    void on_note_selected(const QModelIndex& index);
+    void on_note_selected(const QModelIndex &index);
 
     void on_editButton_clicked();
 

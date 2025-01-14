@@ -65,22 +65,17 @@ void CreateNoteDialog::validateInput()
     QPalette palette;
 
     if (titleIsValid) {
-        palette.setColor(QPalette::Base, Qt::green);
-        palette.setColor(QPalette::Text, Qt::white);
+        titleEdit->setStyleSheet("QLineEdit {background-color: green; color: white;}");
     } else {
-        palette.setColor(QPalette::Base, Qt::red);
-        palette.setColor(QPalette::Text, Qt::black);
+        titleEdit->setStyleSheet("QLineEdit {background-color: red; color: black;}");
     }
 
     titleEdit->setPalette(palette);
 
     if (bodyIsValid) {
-        // edit->setStyleSheet("QPlainTextEdit {background-color: green; color: white;}");
-        palette.setColor(QPalette::Base, Qt::green);
-        palette.setColor(QPalette::Text, Qt::white);
+        textEdit->setStyleSheet("QPlainTextEdit {background-color: green; color: white;}");
     } else {
-        palette.setColor(QPalette::Base, Qt::red);
-        palette.setColor(QPalette::Text, Qt::black);
+        textEdit->setStyleSheet("QPlainTextEdit {background-color: red; color: black;}");
     }
 
     textEdit->setPalette(palette);

@@ -4,6 +4,7 @@
 #include <QDialogButtonBox>
 #include <QMessageBox>
 
+#include "notedelegate.h"
 #include "createnotedialog.h"
 #include "creditwidget.h"
 
@@ -19,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     QListView *listview = this->findChild<QListView *>("listView");
     listview->setModel(notes);
 
+    NoteDelegate *delegate = new NoteDelegate(this);
+    listview->setItemDelegate(delegate);
 
     connect(notes, &NoteModel::dataChanged, this, &MainWindow::on_data_modified);
     connect(listview->selectionModel(), &QItemSelectionModel::currentChanged,
@@ -28,6 +31,36 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::update_display(const QModelIndex &index)
+{
+    QLabel *titleLabel = findChild<QLabel *>("titleLabel");
+    QTextBrowser *body = findChild<QTextBrowser *>("body");
+
+    qDebug() << "Updating display";
+
+    if (!index.isValid()) {
+        qDebug() << "Bad index: " << index.row();
+        titleLabel->setText("No note selected.");
+        body->clear();
+        return;
+    }
+
+    qDebug() << "Valid index: " << index.row();
+
+    // Fetch note data
+    QString title = index.data(NoteModel::TitleRole).toString();
+    QString bodyText = index.data(NoteModel::BodyRole).toString();
+
+    // Elide the title if it's too long
+    QFontMetrics metrics(titleLabel->font());
+    int availableWidth = titleLabel->width();
+    QString elidedTitle = metrics.elidedText(title, Qt::ElideRight, availableWidth);
+
+    // Update the widgets
+    titleLabel->setText(elidedTitle);
+    body->setText(bodyText);
 }
 
 
@@ -70,55 +103,10 @@ void MainWindow::on_editButton_clicked()
 
 }
 
-void MainWindow::on_note_selected(const QModelIndex& index)
-{
-    QLabel *titleLabel = findChild<QLabel *>("titleLabel");
-    QTextBrowser *bodyArea = findChild<QTextBrowser *>("body");
-
-    QPushButton *editButton = findChild<QPushButton *>("editButton");
-    QPushButton *deleteButton = findChild<QPushButton *>("deleteButton");
-
-    if (!index.isValid()) {
-        titleLabel->setText("No note selected");
-        bodyArea->setText("");
-        editButton->setEnabled(false);
-        deleteButton->setEnabled(false);
-        return;
-    }
-
-    QString title = index.data(NoteModel::TitleRole).toString();
-    QString body = index.data(NoteModel::BodyRole).toString();
-
-    titleLabel->setText(title);
-    bodyArea->setText(body);
-    editButton->setEnabled(true);
-    deleteButton->setEnabled(true);
-}
-
-void MainWindow::on_data_modified(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
-{
-    QListView *noteListView = findChild<QListView *>("listView");
-    QModelIndex currentIndex = noteListView->currentIndex();
-
-    QLabel *titleLabel = findChild<QLabel *>("titleLabel");
-    QTextBrowser *body = findChild<QTextBrowser *>("body");
-
-    if (currentIndex.row() >= topLeft.row() && currentIndex.row() <= bottomRight.row()) {
-        QString updatedTitle = currentIndex.data(NoteModel::TitleRole).toString();
-        QString updatedBody = currentIndex.data(NoteModel::BodyRole).toString();
-
-        titleLabel->setText(updatedTitle);
-        body->setText(updatedBody);
-    }
-}
-
 void MainWindow::on_deleteButton_clicked()
 {
     QListView *noteListView = findChild<QListView *>("listView");
     QModelIndex currentIndex = noteListView->currentIndex();
-
-    QLabel *titleLabel = findChild<QLabel *>("titleLabel");
-    QTextBrowser *body = findChild<QTextBrowser *>("body");
 
     QPushButton *editButton = findChild<QPushButton *>("editButton");
     QPushButton *deleteButton = findChild<QPushButton *>("deleteButton");
@@ -129,10 +117,50 @@ void MainWindow::on_deleteButton_clicked()
 
     notes->removeNote(currentIndex.row());
 
-    titleLabel->setText("No note selected.");
-    body->setText("");
+    if (notes->rowCount() == 0) {
+        update_display(QModelIndex());
+        editButton->setEnabled(false);
+        deleteButton->setEnabled(false);
+    } else {
+        QModelIndex newIndex;
 
-    editButton->setEnabled(false);
-    deleteButton->setEnabled(false);
+        if (currentIndex.row() >= notes->rowCount()) {
+            newIndex = notes->index(notes->rowCount() - 1); // If we deleted the last note, select the new last note to display
+        } else {
+            newIndex = notes->index(currentIndex.row());
+        }
+
+        noteListView->setCurrentIndex(newIndex);
+        update_display(newIndex);
+    }
+
 }
 
+void MainWindow::on_note_selected(const QModelIndex& index)
+{
+    qDebug() << "on_note_selected called";
+    QPushButton *editButton = findChild<QPushButton *>("editButton");
+    QPushButton *deleteButton = findChild<QPushButton *>("deleteButton");
+
+    update_display(index);
+
+    if (!index.isValid()) {
+        editButton->setEnabled(false);
+        deleteButton->setEnabled(false);
+        return;
+    }
+
+    editButton->setEnabled(true);
+    deleteButton->setEnabled(true);
+}
+
+void MainWindow::on_data_modified(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    qDebug() << "on_data_modified called";
+    QListView *noteListView = findChild<QListView *>("listView");
+    QModelIndex currentIndex = noteListView->currentIndex();
+
+    if (currentIndex.row() >= topLeft.row() && currentIndex.row() <= bottomRight.row()) {
+        update_display(currentIndex);
+    }
+}

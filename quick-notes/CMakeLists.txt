@@ -29,6 +29,9 @@ set(PROJECT_SOURCES
         notemodel.cpp
         notemodel.h
 
+        notedelegate.cpp
+        notedelegate.h
+
         createnotedialog.cpp
         createnotedialog.h
         createnotedialog.ui

@@ -53,7 +53,7 @@ bool Note::validateTitle(std::string title) {
 
 bool Note::validateBody(std::string body)
 {
-    if (body.size() > Note::MAX_BODY_SIZE || body.size() == 0)
+    if (body.size() > Note::MAX_BODY_SIZE)
         return false;
 
     for (char i : body)
