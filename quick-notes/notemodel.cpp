@@ -46,6 +46,20 @@ void NoteModel::addNote(const Note& note)
     endInsertRows();
 }
 
+void NoteModel::modifyNote(const QModelIndex &index, const QString &title, const QString &body)
+{
+    if (!index.isValid() || index.row() < 0 || index.row() >= m_notes.size()) {
+        qWarning() << "Invalid index passed to modifyNote";
+        return;
+    }
+
+    Note &note = m_notes[index.row()];
+    note.setTitle(title.toStdString());
+    note.setBody(body.toStdString());
+
+    emit dataChanged(index, index, {TitleRole, BodyRole});
+}
+
 void NoteModel::removeNote(int row)
 {
     if (row < 0 || row >= m_notes.size())

@@ -31,6 +31,8 @@ public:
 
     void addNote(const Note& note);
 
+    void modifyNote(const QModelIndex &index, const QString &title, const QString &body);
+
     void removeNote(int row);
 };
 
