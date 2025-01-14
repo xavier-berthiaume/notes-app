@@ -76,6 +76,13 @@
         </item>
        </layout>
       </item>
+      <item>
+       <widget class="QPushButton" name="creditsButton">
+        <property name="text">
+         <string>Credits</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
