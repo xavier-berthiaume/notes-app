@@ -25,6 +25,7 @@ public:
     std::string getBody() const;
 
     // Setters
+    void setId(uint32_t id);
     void setTitle(std::string title);
     void setBody(std::string body);
 

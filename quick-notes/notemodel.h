@@ -2,8 +2,12 @@
 #define NOTEMODEL_H
 
 #include <QAbstractListModel>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
 #include <QString>
 #include <QVector>
+
 #include <cctype>
 
 #include "note.h"
@@ -13,6 +17,10 @@ class NoteModel : public QAbstractListModel
     Q_OBJECT
 
     QVector<Note> m_notes;
+    QSqlDatabase m_db;
+
+    bool initializeDatabase(const QString &dbFilePath);
+    bool loadNotes();
 
 public:
     enum NoteRoles {
@@ -30,9 +38,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     void addNote(const Note& note);
-
     void modifyNote(const QModelIndex &index, const QString &title, const QString &body);
-
     void removeNote(int row);
 };
 

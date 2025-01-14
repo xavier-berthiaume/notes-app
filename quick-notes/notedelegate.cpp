@@ -13,8 +13,14 @@ void NoteDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     QString title = index.data(NoteModel::TitleRole).toString();
     QString body = index.data(NoteModel::BodyRole).toString();
 
-    if (body.length() > 61) {
-        body = body.left(61) + "...";
+    if (title.length() > 50) {
+        title = title.left(50) + "...";
+    }
+
+    if (body.length() > 50) {
+        body = body.left(50) + "...";
+    } else if (body.length() == 0) {
+        body = "No note body";
     }
 
     painter->save();
@@ -35,6 +41,7 @@ void NoteDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     painter->drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter, title);
 
     QFont bodyFont = option.font;
+    bodyFont.setItalic(true);
     bodyFont.setBold(false);
     painter->setFont(bodyFont);
     painter->drawText(bodyRect, Qt::AlignLeft | Qt::AlignVCenter, body);

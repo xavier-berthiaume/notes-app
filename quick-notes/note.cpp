@@ -26,6 +26,11 @@ std::string Note::getBody() const
     return body;
 }
 
+void Note::setId(uint32_t id)
+{
+    this->id = id;
+}
+
 void Note::setTitle(std::string title)
 {
     if (validateTitle(title))
