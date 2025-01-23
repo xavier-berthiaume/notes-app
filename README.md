@@ -21,6 +21,10 @@ To build and run Quick Notes, you need:
 - **CMake**: Version 3.5 or later.
 - **C++ Compiler**: Supporting C++17 or later.
 
+## Installing using binaries
+
+A .deb release of the application can be found at https://github.com/xavier-berthiaume/notes-app/releases/
+
 ### Building the Application
 
 1. Clone the repository:
