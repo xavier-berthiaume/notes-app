@@ -1,13 +1,22 @@
 #include "notemodel.h"
 
+#include <QStandardPaths>
+#include <QDir>
 #include <QFile>
 
 NoteModel::NoteModel(QObject *parent)
     : QAbstractListModel{parent},
       m_db(QSqlDatabase::addDatabase("QSQLITE"))
 {
+    // QString appName = "quick-notes"; // Replace with your application's name
+    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
 
-    initializeDatabase("notes.db");
+    QDir dir(dataDir);
+    if (!dir.exists()) {
+        dir.mkpath(dataDir);
+    }
+
+    initializeDatabase(dataDir + "/notes.db");
     loadNotes();
 }
 
